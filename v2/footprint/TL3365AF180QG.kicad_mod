@@ -1,0 +1,132 @@
+(footprint "TL3365AF180QG"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at -0.01 0.02 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "6f1a6c7c-fb5c-4361-b0e2-6764bd59c9a3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "TL3365AF180QG"
+		(at 0.01 -2.32 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "35aa599a-36c3-4aad-89f9-e43b83532a70")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" "TL3365AF180QG"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b06f021a-24f7-4237-a201-7d6055c81ee0")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d7ecd64a-71e0-4f21-9d2f-55d38c3fcd6b")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "2851a8fd-b542-4d07-a8a0-8afc0e9a0fe5")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -3 -1.7)
+		(end 3.05 1.675)
+		(stroke
+			(width 0.06)
+			(type default)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+		(uuid "f7a08a63-5dd5-4f0c-8d01-7b129031112c")
+	)
+	(fp_rect
+		(start -2.9 -1.6)
+		(end 2.96 1.59)
+		(stroke
+			(width 0.12)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "b4181ec0-fee8-42ba-82ca-7f5ce6d9fb1c")
+	)
+	(pad "1" smd roundrect
+		(at -2.25 1.07)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "8a4a930a-35c3-4103-a750-7dd912efaccf")
+	)
+	(pad "2" smd roundrect
+		(at 2.25 1.07)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "8ce98a90-805f-46b9-8f56-aaca202c777d")
+	)
+	(pad "3" smd roundrect
+		(at -2.25 -1.08)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "903ad2b8-e94c-41cd-ae27-58a2944f5a18")
+	)
+	(pad "4" smd roundrect
+		(at 2.25 -1.08)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "302d966c-db52-4696-9c21-3118e17a17d7")
+	)
+	(model "${KIPRJMOD}/project_models/TL3365AF180QG.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 0 0)
+		)
+	)
+)
