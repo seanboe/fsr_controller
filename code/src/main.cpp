@@ -1,65 +1,106 @@
-// SPDX-FileCopyrightText: 2023 Carter Nelson for Adafruit Industries
-//
-// SPDX-License-Identifier: MIT
-// --------------------------------------
-// i2c_scanner
-//
-// Modified from https://playground.arduino.cc/Main/I2cScanner/
-// --------------------------------------
-
 #include <Arduino.h>
+
+#include <SPI.h>
+#include <Adafruit_ADS1X15.h>
 #include <Wire.h>
 
-// Set I2C bus to use: Wire, Wire1, etc.
-#define WIRE Wire
+#include <AD5143.h>
 
-void setup() {
-  WIRE.begin();
+#define AD_1_ADDR 0x28
+#define AD_2_ADDR 0x2B
 
-  Serial.begin(9600);
-  while (!Serial)
-     delay(10);
-  Serial.println("\nI2C Scanner");
+AD5143 ad1;
+AD5143 ad2;
+
+#define ADS_1_ADDRESS 0x4B
+#define ADS_2_ADDRESS 0x4A
+
+Adafruit_ADS1115 ads1;
+Adafruit_ADS1115 ads2;
+
+#define CHANNEL_COUNT 8
+
+// Array that holds the voltage read on each channel (not in order)
+float pressure_data[CHANNEL_COUNT];
+
+// the index of the map holds the index of that index in the pressure_data array
+uint8_t pressure_data_map[] = {6, 5, 7, 4, 3, 2, 1, 0};
+
+unsigned long prevtime;
+// In microseconds
+#define UPDATE_DELAY    20000
+
+float get_fsr_channel(uint8_t fsr_channel);
+void setRheostats();
+void setup(void)
+{
+  Serial.begin(115200);
+  while(!Serial) {
+    ;
+  }
+
+  Wire.setClock(400000);
+
+  if (!ads1.begin(ADS_1_ADDRESS, &Wire)) {
+    Serial.println("Failed to initialize ADS1. ");
+    while (1);
+  }
+
+  if (!ads2.begin(ADS_2_ADDRESS, &Wire)) {
+    Serial.println("Failed to initialize ADS2. ");
+    while (1);
+  }
+
+  setRheostats();
+  prevtime = micros();
+
 }
 
+void loop(void)
+{
 
-void loop() {
-  byte error, address;
-  int nDevices;
 
-  Serial.println("Scanning...");
 
-  nDevices = 0;
-  for(address = 1; address < 127; address++ )
-  {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
-    WIRE.beginTransmission(address);
-    error = WIRE.endTransmission();
+  // setRheostats();
 
-    if (error == 0)
-    {
-      Serial.print("I2C device found at address 0x");
-      if (address<16)
-        Serial.print("0");
-      Serial.print(address,HEX);
-      Serial.println("  !");
+  // Serial.println("Hi");
 
-      nDevices++;
-    }
-    else if (error==4)
-    {
-      Serial.print("Unknown error at address 0x");
-      if (address<16)
-        Serial.print("0");
-      Serial.println(address,HEX);
-    }
-  }
-  if (nDevices == 0)
-    Serial.println("No I2C devices found\n");
-  else
-    Serial.println("done\n");
+  // for (int x = 0; x < CHANNEL_COUNT; x++) {
+  //   if (x < 4)
+  //     pressure_data[x] = ads1.computeVolts(ads1.readADC_SingleEnded(x % 4));
+  //   else
+  //     pressure_data[x] = ads2.computeVolts(ads2.readADC_SingleEnded(x % 4));
+  //   Serial.print("CHAN" + String(x) + ": " + pressure_data[x]);
+  // }
+  // Serial.println();
 
-  delay(5000);           // wait 5 seconds for next scan
+  // // Get upper stimulation
+  // float upper_stim = get_fsr_channel(5) * 0.4 + get_fsr_channel(4) * 0.2 + get_fsr_channel(2) * 0.15 + get_fsr_channel(3) * 0.15 + get_fsr_channel(1) * 0.1;
+  // upper_stim = (UPPER_LIN_RISE / 3.3) * upper_stim;
+
+  // float lower_stim = get_fsr_channel(8) * 0.5 + get_fsr_channel(7) * 0.3 + get_fsr_channel(6) * 0.2;
+  // lower_stim = (LOWER_LIN_RISE / 3.3) * lower_stim;
+
+  // if (micros() - prevtime >= UPDATE_DELAY) {
+  //   char buffer[30];
+  //   sprintf(buffer, "<%s,%s>", String(upper_stim, 1).c_str(), String(lower_stim, 1).c_str());
+  //   Serial.println(buffer);
+  //   Serial.flush();
+  //   prevtime = micros();
+  // }
+
+}
+
+// Put in the number on the datasheet, don't zero index
+float get_fsr_channel(uint8_t fsr_channel) {
+  return pressure_data[pressure_data_map[fsr_channel - 1]];
+}
+
+void setRheostats() {
+  ad1.init(AD_1_ADDR);
+  ad2.init(AD_2_ADDR);
+  ad1.setChannelResistance(8, 240);
+  ad2.setChannelResistance(8, 240);
+  // ad1.setEEPROM();
+  // ad2.setEEPROM();
 }
