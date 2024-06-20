@@ -24,22 +24,21 @@ Adafruit_ADS1115 ads2;
 float pressure_data[CHANNEL_COUNT];
 
 // the index of the map holds the index of that index in the pressure_data array
-uint8_t pressure_data_map[] = {6, 5, 7, 4, 3, 2, 1, 0};
+uint8_t pressure_data_map[] = {6, 5, 7, 4, 1, 0, 2, 3};
 
 unsigned long prevtime;
 // In microseconds
 #define UPDATE_DELAY    20000
 
-float get_fsr_channel(uint8_t fsr_channel);
+float getFsrChannel(uint8_t fsr_channel);
 void setRheostats();
 void setup(void)
 {
   Serial.begin(115200);
-  while(!Serial) {
-    ;
-  }
-
   Wire.setClock(400000);
+
+  ad1.init(AD_1_ADDR);
+  ad2.init(AD_2_ADDR);
 
   if (!ads1.begin(ADS_1_ADDRESS, &Wire)) {
     Serial.println("Failed to initialize ADS1. ");
@@ -56,23 +55,26 @@ void setup(void)
 
 }
 
-void loop(void)
-{
+void loop(void) {
 
+  if (prevtime - micros() > 50000) {
 
+    for (int x = 0; x < CHANNEL_COUNT; x++) {
+      if (x < 4)
+        pressure_data[x] = ads1.computeVolts(ads1.readADC_SingleEnded(x % 4));
+      else
+        pressure_data[x] = ads2.computeVolts(ads2.readADC_SingleEnded(x % 4));
+      // Serial.print("CHAN" + String(x) + ": " + pressure_data[x] + ", ");
+    }
 
-  // setRheostats();
+    for (int x = 0; x < 8; x++) {
+      Serial.print(String(getFsrChannel(x)) + ",");
+    }
+    Serial.println();
 
-  // Serial.println("Hi");
+    prevtime = micros();
 
-  // for (int x = 0; x < CHANNEL_COUNT; x++) {
-  //   if (x < 4)
-  //     pressure_data[x] = ads1.computeVolts(ads1.readADC_SingleEnded(x % 4));
-  //   else
-  //     pressure_data[x] = ads2.computeVolts(ads2.readADC_SingleEnded(x % 4));
-  //   Serial.print("CHAN" + String(x) + ": " + pressure_data[x]);
-  // }
-  // Serial.println();
+  }
 
   // // Get upper stimulation
   // float upper_stim = get_fsr_channel(5) * 0.4 + get_fsr_channel(4) * 0.2 + get_fsr_channel(2) * 0.15 + get_fsr_channel(3) * 0.15 + get_fsr_channel(1) * 0.1;
@@ -92,15 +94,11 @@ void loop(void)
 }
 
 // Put in the number on the datasheet, don't zero index
-float get_fsr_channel(uint8_t fsr_channel) {
-  return pressure_data[pressure_data_map[fsr_channel - 1]];
+float getFsrChannel(uint8_t fsr_channel) {
+  return pressure_data[pressure_data_map[fsr_channel]];
 }
 
 void setRheostats() {
-  ad1.init(AD_1_ADDR);
-  ad2.init(AD_2_ADDR);
   ad1.setChannelResistance(8, 240);
   ad2.setChannelResistance(8, 240);
-  // ad1.setEEPROM();
-  // ad2.setEEPROM();
 }
